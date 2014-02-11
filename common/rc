@@ -1841,7 +1841,7 @@ _full_fstyp_details()
 _full_platform_details()
 {
      os=`uname -s`
-     host=`hostname -s`
+     host="wangsl"
      kernel=`uname -r`
      platform=`uname -m`
      echo "$os/$platform $host $kernel"

@@ -57,7 +57,7 @@ export LC_ALL=C
 [ -d /usr/freeware/bin ] && PATH=$PATH:/usr/freeware/bin
 PATH=".:$PATH"
 
-export HOST=`hostname -s`
+export HOST="wangsl"
 export HOSTOS=`uname -s`
 [ "$HOSTOS" = "IRIX64" ] && export HOSTOS="IRIX"
 
