@@ -1,0 +1,39 @@
+QA output created by 050
+*** report no quota settings
+ SCRATCH_DEV 0 0 0 0 0 0 
+
+*** report initial settings
+ SCRATCH_DEV 0 100 500 1 4 10 
+
+*** push past the soft inode limit
+ SCRATCH_DEV 0 100 500 3 4 10 
+
+*** push past the soft block limit
+ SCRATCH_DEV 140* 100 500 4 4 10 
+
+*** push past the hard inode limit (expect EDQUOT)
+ SCRATCH_DEV 140* 100 500 16* 4 10 
+
+*** push past the hard block limit (expect EDQUOT)
+ SCRATCH_DEV 540* 100 500 16* 4 10 
+
+*** unmount
+*** report no quota settings
+ SCRATCH_DEV 0 0 0 0 0 0 
+
+*** report initial settings
+ SCRATCH_DEV 0 100 500 1 4 10 
+
+*** push past the soft inode limit
+ SCRATCH_DEV 0 100 500 3 4 10 
+
+*** push past the soft block limit
+ SCRATCH_DEV 140* 100 500 4 4 10 
+
+*** push past the hard inode limit (expect EDQUOT)
+ SCRATCH_DEV 140* 100 500 9* 4 10 7days
+
+*** push past the hard block limit (expect EDQUOT)
+ SCRATCH_DEV 496* 100 500 7days 9* 4 10 7days
+
+*** unmount

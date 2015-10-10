@@ -79,6 +79,17 @@ $(TARGETS): $(LIBTEST)
 	@echo "    [CC]    $@"
 	$(Q)$(LTLINK) $@.c -o $@ $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(LIBTEST)
 
+all: setproject getproject
+
+project.o: project.c project.h
+	gcc -Wall -Werror -c -g project.c -o project.o
+
+setproject: setproject.c project.o
+	gcc -Wall -Werror -g project.o setproject.c -o setproject
+
+getproject: getproject.c project.o
+	gcc -Wall -Werror -g project.o getproject.c -o getproject
+
 LINKTEST = $(LTLINK) $@.c -o $@ $(CFLAGS) $(LDFLAGS)
 
 install: default $(addsuffix -install,$(SUBDIRS))
