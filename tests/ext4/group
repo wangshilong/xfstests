@@ -23,6 +23,7 @@
 018 fuzzers
 019 fuzzers
 050 auto quick
+106 auto quick
 271 auto rw quick
 301 aio dangerous ioctl rw stress
 302 aio dangerous ioctl rw stress
