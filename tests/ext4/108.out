@@ -1,0 +1,28 @@
+QA output created by 108
+
+### create files, setting up ownership
+chown: invalid user: '/mnt/scratch/buffer'
+chgrp: invalid group: '/mnt/scratch/buffer'
+  File: "SCRATCH_MNT/buffer"
+  Size: 0            Filetype: Regular File
+  Mode: (0644/-rw-r--r--)         Uid: (0)  Gid: (0)
+3
+  File: "SCRATCH_MNT/direct"
+  Size: 0            Filetype: Regular File
+  Mode: (0644/-rw-r--r--)         Uid: (0)  Gid: (0)
+3
+  File: "SCRATCH_MNT/mmap"
+  Size: 0            Filetype: Regular File
+  Mode: (0644/-rw-r--r--)         Uid: (0)  Gid: (0)
+3
+### some controlled buffered, direct and mmapd IO
+  File: "SCRATCH_MNT/buffer"
+  Size: 16777216     Filetype: Regular File
+  Mode: (0644/-rw-r--r--)         Uid: (0)  Gid: (0)
+  File: "SCRATCH_MNT/direct"
+  Size: 16777216     Filetype: Regular File
+  Mode: (0644/-rw-r--r--)         Uid: (0)  Gid: (0)
+  File: "SCRATCH_MNT/mmap"
+  Size: 16777216     Filetype: Regular File
+  Mode: (0644/-rw-r--r--)         Uid: (0)  Gid: (0)
+ SCRATCH_DEV 49152 0 0 3 0 0 

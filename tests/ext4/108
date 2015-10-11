@@ -1,0 +1,98 @@
+#! /bin/bash
+# FS QA Test No. 108
+#
+# Simple quota accounting test for direct/buffered/mmap IO.
+#
+#-----------------------------------------------------------------------
+# Copyright (c) 2005 Silicon Graphics, Inc.  All Rights Reserved.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it would be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write the Free Software Foundation,
+# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+#-----------------------------------------------------------------------
+#
+
+seq=`basename $0`
+seqres=$RESULT_DIR/$seq
+echo "QA output created by $seq"
+
+here=`pwd`
+tmp=/tmp/$$
+status=1	# failure is the default!
+trap "rm -f $tmp.*; exit \$status" 0 1 2 3 15
+
+# get standard environment, filters and checks
+. ./common/rc
+. ./common/filter
+. ./common/quota
+
+# real QA test starts here
+_supported_os Linux #IRIX
+_require_scratch
+
+filter_ext4_quota()
+{
+	grep $SCRATCH_DEV 2>&1 | tr -s '[:space:]' | _filter_scratch
+}
+
+test_files()
+{
+	echo; echo "### create files, setting up ownership"
+	rm -f $SCRATCH_MNT/{buffer,direct,mmap}
+	touch $SCRATCH_MNT/{buffer,direct,mmap}
+	src/setproject -v $prid $SCRATCH_MNT/buffer
+	src/setproject -v $prid $SCRATCH_MNT/direct
+	src/setproject -v $prid $SCRATCH_MNT/mmap
+	chown $uid $SCRATCH_MNT/{buffer,direct,mmap}
+	chgrp $gid $SCRATCH_MNT/{buffer,direct,mmap}
+	for file in $SCRATCH_MNT/{buffer,direct,mmap}; do
+		$here/src/lstat64 $file | head -3 | _filter_scratch
+		src/getproject --only-values $file
+	done
+}
+
+test_accounting()
+{
+	echo "### some controlled buffered, direct and mmapd IO"
+	echo "--- initiating parallel IO..." >>$seqres.full
+	$XFS_IO_PROG -c 'pwrite -b 1m 0 16m' -c 'fsync' \
+					$SCRATCH_MNT/buffer >>$seqres.full 2>&1 &
+	$XFS_IO_PROG -c 'pwrite -b 1m 0 16m' -d \
+					$SCRATCH_MNT/direct >>$seqres.full 2>&1 &
+	$XFS_IO_PROG -c 't 16m' -c 'mm -rw 0 16m' -c 'mw 0 16m' -c 'ms -s' \
+					$SCRATCH_MNT/mmap   >>$seqres.full 2>&1 &
+	wait
+	echo "--- completed parallel IO ($type)" >>$seqres.full
+
+	for file in $SCRATCH_MNT/{buffer,direct,mmap}; do
+		$here/src/lstat64 $file | head -3 | _filter_scratch
+	done
+	quota -v -P $prid | filter_ext4_quota
+}
+
+# real QA test starts here
+rm -f $tmp.projects $seqres.full
+umount $SCRATCH_DEV 2>/dev/null
+_scratch_mkfs_ext4 -O quota,project >> $seqres.full 2>&1
+_scratch_mount
+
+prid=3
+
+#echo; echo "### test project accounting"
+id=$prid
+test_files
+test_accounting
+umount $SCRATCH_DEV 2>/dev/null
+
+status=0
+exit
