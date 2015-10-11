@@ -1,0 +1,5 @@
+QA output created by 107
+### deny a hard link - wrong project ID
+hard link failed
+### allow a hard link - right project ID
+hard link succeeded
