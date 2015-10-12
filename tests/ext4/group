@@ -40,3 +40,4 @@
 307 auto ioctl rw
 308 auto ioctl rw prealloc quick
 400 auto quick
+401 auto quick
