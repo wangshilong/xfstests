@@ -29,6 +29,7 @@
 134 auto quick
 196 auto quick
 244 auto quick
+299 auto quick
 271 auto rw quick
 301 aio dangerous ioctl rw stress
 302 aio dangerous ioctl rw stress
