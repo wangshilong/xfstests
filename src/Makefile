@@ -11,7 +11,8 @@ TARGETS = dirstress fill fill2 getpagesize holes lstat64 \
 	devzero feature alloc fault fstest t_access_root \
 	godown resvtest writemod makeextents itrash rename \
 	multi_open_unlink dmiperf unwritten_sync genhashnames t_holes \
-	t_mmap_writev t_truncate_cmtime dirhash_collide t_rename_overwrite
+	t_mmap_writev t_truncate_cmtime dirhash_collide t_rename_overwrite \
+	getproject setproject
 
 LINUX_TARGETS = xfsctl bstat t_mtab getdevicesize preallo_rw_pattern_reader \
 	preallo_rw_pattern_writer ftrunc trunc fs_perms testx looptest \
@@ -78,17 +79,6 @@ include $(BUILDRULES)
 $(TARGETS): $(LIBTEST)
 	@echo "    [CC]    $@"
 	$(Q)$(LTLINK) $@.c -o $@ $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(LIBTEST)
-
-all: setproject getproject
-
-project.o: project.c project.h
-	gcc -Wall -Werror -c -g project.c -o project.o
-
-setproject: setproject.c project.o
-	gcc -Wall -Werror -g project.o setproject.c -o setproject
-
-getproject: getproject.c project.o
-	gcc -Wall -Werror -g project.o getproject.c -o getproject
 
 LINKTEST = $(LTLINK) $@.c -o $@ $(CFLAGS) $(LDFLAGS)
 

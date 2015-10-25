@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
@@ -25,6 +28,35 @@ void help(void)
 "  -v, --only-values       use value as the project indentifier\n"
 "      --version           print version and exit\n"
 "      --help              this help text\n");
+}
+
+int fgetproject(const char *name, int *project)
+{
+	struct stat buf;
+	int fd;
+	int ret;
+	int save_errno = 0;
+	struct fsxattr fsxattr;
+
+	if (stat(name, &buf) == -1)
+		return -1;
+
+	fd = open(name, OPEN_FLAGS);
+	if (fd == -1)
+		return -1;
+
+	ret = ioctl(fd, EXT4_IOC_FSGETXATTR, &fsxattr);
+	if (ret < 0) {
+		save_errno = errno;
+		ret = -1;
+	}
+
+	close(fd);
+	if (save_errno)
+		errno = save_errno;
+	if (ret >= 0)
+		*project = fsxattr.fsx_projid;
+	return ret;
 }
 
 int main(int argc, char **argv)
